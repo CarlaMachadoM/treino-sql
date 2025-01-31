@@ -511,3 +511,232 @@ order by totaulas;
 select totaulas, count(*) from cursos
 group by totaulas
 order by totaulas;
+
+-- selecione as aulas = 30 agrupadas por carga
+select carga, totaulas from cursos
+where totaulas = 30
+group by carga;
+
+-- contando quantos cursos tem = 30 aulas
+select carga, count(nome) from cursos
+where totaulas = 30
+group by carga;
+select * from cursos;
+
+-- contando cursos que fora lançados por ano
+select ano, count(nome) from cursos
+group by ano;
+
+-- ordenando por quantidade
+select ano, count(nome) from cursos
+group by ano
+order by count(*);
+
+-- se quiser o inverso, bast digitar desc
+select ano, count(nome) from cursos
+group by ano
+order by count(*) desc;
+
+-- para agrupar contando o ano >= 5
+select ano, count(nome) from cursos
+group by ano
+having count(ano) >= 5
+order by count(*) desc;
+
+-- totaulas > 30, agrupando por ano, apenas para anos maiores que 2013
+select ano, count(nome) from cursos where totaulas > 30 
+group by ano
+having ano > 2013 
+order by count(*);
+
+-- selecionar carga e o total de horas dos cursos, onde o ano seja maior que 2015, agrupado por carga, para cargas acima da media
+select carga, count(*) from cursos
+where ano > 2015
+group by carga
+having carga > (select avg(carga) from cursos);
+
+-- EXERCICIO............................................................
+create database Livraria;
+show databases;
+use livraria;
+
+create table livros (
+nome varchar (40),
+autor varchar (40),
+sexo varchar (1),
+pags int (8),
+editora varchar (20),
+preco float(4),
+estado varchar (25),
+publicacao int (4)
+);
+
+insert into livros (nome, autor, sexo, pags, editora, preco, estado, publicacao)
+values
+('Cavaleiro Real', 'Ana Claudia', 'F', '465', 'Atlas', '49.9', 'RJ', '2009'),
+('SQL Para Leigos', 'João Nunes', 'M', '450', 'Addison', '98', 'SP', '2018'),
+('Receitas Caseiras', 'Célia Tavares', 'F', '210', 'Atlas', '45', 'RJ', '2008'),
+('Pessoas Efetivas', 'Eduardo Santos', 'M', '390', 'Beta', '78.99', 'RJ', '2018'),
+('Hábitos Saudáveis', 'Eduardo Santos', 'M', '630', 'Beta', '150.98', 'RJ', '2019'),
+('A Casa Marrom', 'Hermes Macedo', 'M', '250', 'Bubba', '60', 'MG', '2016'),
+('Estácio Querido', 'Geraldo Francisco', 'M', '310', 'Insignia', '100', 'ES', '2015'),
+('Para Sempre Amigas', 'Leda Silva', 'F', '510', 'Insignia', '78.98', 'ES', '2011'),
+('Copas Inesquecíveis', 'Marco Alcântara', 'M', '200', 'Larson', '130.98', 'RS', '2018'),
+('O Poder da Mente', 'Clara Mafra', 'F', '120', 'Continental', '56.58', 'SP', '2017');
+select*from livros;
+
+select nome, editora from livros;
+
+select autor, estado  from livros where sexo= 'M';
+
+select nome, pags from livros where sexo = 'F';
+
+select preco from livros where estado = 'SP';
+
+select * from livros where sexo = 'M'
+having estado = 'SP' or estado = 'RJ';
+
+-- fim.................................................................... 
+use cadastro;
+-- Agrupando registros
+-- Exibir nome, carga e ano da tabela cursos
+SELECT nome, SUM(carga) AS total_carga, ano
+FROM cursos
+GROUP BY nome, ano
+ORDER BY ano;
+
+
+-- Agrupar por: nome, carga e ano
+select * from cursos
+group by nome, carga, ano;
+
+-- Ordenar por ano
+select carga, count(carga) as qtd_dias from cursos
+group by carga
+order by carga;
+
+-- mais.................................... 
+
+USE Cadastro;
+CREATE TABLE Vendas (
+ID Smallint auto_increment Primary Key,
+Nome_Vendedor Varchar(80),
+Quantidade Int,
+Produto Varchar(60),
+Cidade Varchar(50),
+UF Varchar (2)
+);
+
+INSERT INTO Vendas (ID, Nome_Vendedor, Quantidade, Produto, Cidade, UF)
+VALUES
+(default,'Luana',1800,'Celular','São Paulo', 'SP'),
+(default,'Carla',2300,'Webcam','Recife', 'PE'),
+(default,'Joao',1900,'Mouse','São Paulo', 'SP'),
+(default,'Jorge',1700,'Webcam','Rio de Janeiro','RJ'),
+(default,'Pedro',2120,'Celular','Recife', 'PE'),
+(default,'andre',3980,'Mouse','São Paulo','SP'),
+(default,'Fabiana',2120,'Webcam','Recife', 'PE'),
+(default,'Rosana',1480,'Mouse','Rio de Janeiro','RJ'),
+(default,'Roberto',4150,'Celular','Minas Gerais','MG'),
+(default,'Rose',2100,'Celular','São Paulo','SP'),
+(default,'Marcos',3200,'Mouse','Minas Gerais','MG'),
+(default,'Davi',1500,'Webcam','Recife', 'PE'),
+(default,'Marcelo',3010,'Mouse','Rio de Janeiro','RJ'),
+(default,'Roberto',5620,'Celular','São Paulo','SP');
+select * from vendas;
+
+-- coulsulta usando agregação para obter o total de vendas de celular sem o group by
+select sum(quantidade) as total_celular
+from vendas
+where produto = 'celular';
+
+-- usando o group by
+select cidade, sum(quantidade) as total
+from vendas
+group by cidade;
+
+-- counsulta totalizando as vendas de todos os produtos por cidade, faça um filtro para encontrar RECIFE e SÃO PAULO (usando group by e having)
+select cidade, sum(quantidade) as total
+from vendas
+group by cidade
+having cidade = 'Recife';
+
+select cidade, sum(quantidade) as total
+from vendas
+group by cidade
+having cidade = 'São Paulo';
+
+-- exercicio..................................... 
+-- 1) Crie uma lista com as profissões dos alunos e seus respectivos quantitativos. Ou seja, quantos são programadores e assim sucessivamente 
+use cadastro;
+select profissao, count(profissao) as total
+from alunos
+group by profissao;
+
+-- 2) Crie uma lista com as profissões dos alunos e seus respectivos quantitativos em ordem crescente. Ou seja, quantos são programadores e assim sucessivamente 
+select profissao, count(profissao) as total
+from alunos
+group by profissao
+order by total;
+
+-- 3) Quantos alunos homens e quantas mulheres nasceram após 01/jan/2005, agrupar por sexo? 
+select nascimento, count(nascimento) as total
+from alunos
+where nascimento > '2005-01-01' and sexo = 'M'
+group by nascimento;
+
+select nascimento, count(nascimento) as total
+from alunos
+where nascimento > '2005-01-01' and sexo = 'F'
+group by nascimento;
+
+-- 4) Criar uma lista com os alunos e alunas que nasceram fora do Brasil, mostrando o país de origem e o total de pessoas nascidas lá. Só nos interessam os países que tiverem mais de 3 alunos com essa 
+-- nacionalidade. “Ou seja, saber quantas pessoas moram em cada um dos países que não seja o Brasil e só nos interessa os que tem mais de três alunos"
+select nacionalidade , count(nacionalidade) as total
+from alunos
+where nacionalidade != 'Brasil'
+group by nacionalidade
+having total > 3;
+select * from alunos;
+
+-- 5) Criar uma lista agrupada pela altura dos alunos, exibindo quantas pessoas pesam mais de 100 kg e estão acima da média de altura de todos os cadastrados.
+-- Passos a serem seguidos:
+-- Calcular a média de altura de todos os alunos cadastrados.
+-- Filtrar todas as pessoas que pesam mais de 100 kg.
+-- Agrupar essas pessoas por altura e mostrar apenas aquelas que estão acima da média de altura calculada no passo 1.
+select avg(altura) as media_altura from alunos;
+select altura, count(*) from alunos
+where peso > '100'
+group by altura
+having altura > (select avg(altura) from alunos)
+order by altura;
+
+-- fim .................................................. 
+
+alter table alunos
+add column cursopreferido int;
+desc alunos;
+
+-- cursopreferido é uma chave estrangeira, para fazer a ligação entre as tabelas alunos e cursos
+alter table alunos
+add foreign key (cursopreferido)
+references cursos (idcurso);
+
+ select*from cursos;
+
+-- cadastrando os cursos preferidos dos alunos
+update alunos
+set cursopreferido = '6' where id='1'; -- 6 é o id do curso sql e 1 é o id do aluno Daniel Morais
+select*from alunos;
+
+update `cadastro`.`alunos` set `cursopreferido` = '22' where (`id` = '2');
+update `cadastro`.`alunos` set `cursopreferido` = '12' where (`id` = '3');
+update `cadastro`.`alunos` set `cursopreferido` = '7' where (`id` = '4');
+update `cadastro`.`alunos` set `cursopreferido` = '1' where (`id` = '5');
+update `cadastro`.`alunos` set `cursopreferido` = '8' where (`id` = '6');
+update `cadastro`.`alunos` set `cursopreferido` = '4' where (`id` = '7');
+update `cadastro`.`alunos` set `cursopreferido` = '5' where (`id` = '8');
+update `cadastro`.`alunos` set `cursopreferido` = '3' where (`id` = '9');
+update `cadastro`.`alunos` set `cursopreferido` = '30' where (`id` = '10');
+update `cadastro`.`alunos` set `cursopreferido` = '22' where (`id` = '11');
+
