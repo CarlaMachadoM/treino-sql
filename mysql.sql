@@ -740,3 +740,120 @@ update `cadastro`.`alunos` set `cursopreferido` = '3' where (`id` = '9');
 update `cadastro`.`alunos` set `cursopreferido` = '30' where (`id` = '10');
 update `cadastro`.`alunos` set `cursopreferido` = '22' where (`id` = '11');
 
+-- fim...........................................................................
+
+create database oficina;
+
+use oficina;
+
+create table cliente ( 
+idcliente int primary key auto_increment,
+nome varchar(30) not null,
+sexo enum ('M', 'F') not null,
+id_carro int unique
+);
+
+create table telefones ( 
+idtelefone int primary key auto_increment,
+tipo varchar(20),
+numero varchar(11),
+id_cliente int unique
+);
+
+create table marca ( 
+idmarca int primary key auto_increment,
+marca varchar(30) not null
+);
+
+create table carros ( 
+idcarro int primary key auto_increment,
+modelo varchar(30) not null,
+placa varchar(7) not null,
+id_marca int unique
+);
+
+create table cores ( 
+idcor int primary key auto_increment,
+cor varchar(30) not null
+);
+
+create table carro_cor ( 
+id_carro int unique,
+id_cor int unique
+);
+
+-- constraints é uma regra aplicada a uma ou maus colunas de uma tabela para impor restriçao aos dados que podem ser inseridos ou modificados
+-- ou seja: não vou inserir qualquer informação nos campos da minha tabela
+alter table telefones
+add constraint fk_telefones_cliente
+foreign key (id_cliente)
+references cliente (idcliente);
+
+alter table cliente
+add constraint fk_cliente_carro
+foreign key (id_carro)
+references carros (idcarro);
+
+alter table carros
+add constraint fk_carro_marca
+foreign key (id_marca)
+references marca (idmarca);
+
+-- inner join e outer join
+-- inner join intersecção de tabelas
+-- left join tabela da esquerda
+-- right join tabela da direita
+-- full outer join junta tudo
+
+-- junção das tabelas
+use cadastro;
+select * from alunos;
+select * from cursos;
+
+-- quando faço isso ele faz uma relação com todos os cursos para cada aluno
+select alunos.nome, alunos.cursopreferido, cursos.nome, cursos.ano
+from alunos join cursos;
+
+-- aqui podemos filtrar as coisas e, para criar um filtro, usa-se o on, que dá sentido ao join
+select alunos.nome, alunos.cursopreferido, cursos.nome, cursos.ano
+from alunos join cursos
+on cursos.idcurso = alunos.cursopreferido
+order by alunos.nome;
+
+-- apelidos de colunas usando o as
+-- from alunos as a join cursos as c;
+
+select a.nome, a.cursopreferido, c.nome, c.ano
+from alunos as a join cursos as c
+on c.idcurso = a.cursopreferido
+order by a.nome;
+
+-- temos vários cursos, mas só apareceram esses alunos. Isso de deve ao fato dos outros alunos não terem cursos preferidos
+-- inner join é um join somente com as relaçoes entre as duas tabelas
+-- para considerar campos que não fazem parte, usamos o outer join. Se quiser usar a tabela da esquerda, o comando é left outer join, ou left join
+-- para a direita usa right outer join ou right join
+
+create table aluno_assiste_curso(
+id int not null auto_increment,
+data date,
+idalunos int,
+idcurso int,
+primary key (id),
+foreign key (idalunos) references alunos (id),
+foreign key (idcurso) references cursos (idcurso)
+);
+
+insert into aluno_assiste_curso (data, idalunos, idcurso)
+values
+('2014-03-01', '1', '2'),
+('2015-12-22', '3', '6'),
+('2014-01-01', '22', '12'),
+('2016-05-12', '1', '19');
+select * from aluno_assiste_curso;
+
+-- utilizando as tabelas alunos e aluno_assiste_curso, use join para relacionar o id da tabela alunos com o idalunos da tabela aluno_assiste_curso
+-- mostre todos os dados da tabela
+select a.*, ac.*
+from alunos as a join aluno_assiste_curso as ac
+where a.id = ac.idalunos
+order by nome;
